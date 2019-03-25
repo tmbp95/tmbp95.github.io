@@ -9,9 +9,7 @@ dispatch9.on("BarClick.barchart", function(data){
 
   if(clickedBar == null){
     clickedBar = data.name;
-    console.log(clickedBar)
     selectedBar = d3.select("rect[title=\'"+data.name+"\'");
-    console.log(selectedBar)
     colorBar = selectedBar.attr("fill");
     selectedBar.transition() // <------- TRANSITION STARTS HERE --------
                 .delay(0) 
@@ -23,6 +21,7 @@ dispatch9.on("BarClick.barchart", function(data){
     var lossesinput = $("#lossesinput").prop('checked');
     var winsinput = $("#winsinput").prop('checked');
     gen_radarchartPlayers(idTournament);
+    gen_linechart(clickedBar);
   }else{
     selectedBar = d3.select("rect[title=\'"+clickedBar+"\'");
     selectedBar.transition();
@@ -42,10 +41,12 @@ dispatch9.on("BarClick.barchart", function(data){
     var lossesinput2 = $("#lossesinput2").prop('checked');
     var winsinput2 = $("#winsinput2").prop('checked');
     gen_radarchartPlayers(idTournament);
+    gen_linechart(clickedBar);
   }
 })
 
 function gen_horizbarchart(name,ola) {
+  d3.select("#horizbarchart").selectAll("svg").remove();
 var idTournament = ola;
 $("#teamsfont").html(name);
 var margin = {top: 10, right: 11, bottom: 55, left: 30},
@@ -81,18 +82,22 @@ d3.json("data/teste4.json", function(error, data) {
         average += data[i].rating;
       }
     }
-    $(".Playerlabel").html(data[0].name);
-    $("#nameofplayer").val(data[0].name);
-    var widthBox = parseFloat($(".Playerlabel").css("width"));
-    $(".Playerlabel").css("left", "30%");
-    $(".Playerlabel").css("margin-left", -(widthBox/2));
+
 
     average = average/5;
     average = average.toFixed(2);
 
     data = vectorData;
+
+    $(".Playerlabel").html(data[0].name);
+    $("#nameofplayer").val(data[0].name);
+    gen_linechart(data[0].name);
+    var widthBox = parseFloat($(".Playerlabel").css("width"));
+    $(".Playerlabel").css("left", "30%");
+    $(".Playerlabel").css("margin-left", -(widthBox/2));
   
   	data.sort(function(a) { return a.rating; });
+
   
   	x.domain([0, d3.max(data, function(d) { return d.rating; })+0.5]);
     y.domain(data.map(function(d) { return d.name; })).padding(0.1);
@@ -192,8 +197,31 @@ d3.json("data/teste4.json", function(error, data) {
         div.transition()
             .duration(200)
             .style("opacity", .9);
+            if(d.rating>average){
+              var differenceRate = d.rating.toFixed(2) - average;
+              var pos = "true";
+            }else if(d.rating.toFixed(2)<average){
+              var differenceRate = average - d.rating.toFixed(2);
+              var pos = "false";
+            }else{
+              var differenceRate = 0;
+              var pos = "equal";
+            }
+            differenceRate = differenceRate.toFixed(2);
+            if(pos=="true"){
+              differenceRate = "+ " + differenceRate; 
+              var impact = "positive";
+            }else if(pos=="false"){
+              differenceRate = "- " + differenceRate; 
+              var impact = "negative";
+            }else{
+              differenceRate = differenceRate; 
+              var impact = "equal";
+            }
         div.html("<strong>Player:</strong> <span style='color:white'>" + d.name + "</span><br>" + 
-                 "<strong>Rating:</strong> <span style='color:white'>" + d.rating + "</span>")
+                 "<strong>Rating:</strong> <span style='color:white'>" + d.rating.toFixed(2) + "</span><br>" + 
+                 "<strong>Difference:</strong> <span style='color:white'>" + differenceRate + "</span><br>" +
+                 "<strong>Impact:</strong> <span style='color:white'>" + impact + "</span>")
             .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY) + "px");
 
@@ -203,8 +231,6 @@ d3.json("data/teste4.json", function(error, data) {
                 var widthBox = parseFloat($(".Playerlabel").css("width"));
                 $(".Playerlabel").css("left", "29%");
                 $(".Playerlabel").css("margin-left", -(widthBox/2));
-                $("#legenda1").html(clickedBar.substring(0,9));
-                $("#legenda2").html(d.name.substring(0,9));
                 $("#nameofplayer").val(d.name);
                 gen_radarchartPlayers(idTournament); 
               }else{
@@ -212,7 +238,6 @@ d3.json("data/teste4.json", function(error, data) {
                 var widthBox = parseFloat($(".Playerlabel").css("width"));
                 $(".Playerlabel").css("left", "27%");
                 $(".Playerlabel").css("margin-left", -(widthBox/2));
-                $("#legenda1").html(d.name.substring(0,9));
                 $("#nameofplayer").val(d.name);
                 gen_radarchartPlayers(idTournament);
               }
@@ -221,7 +246,6 @@ d3.json("data/teste4.json", function(error, data) {
               var widthBox = parseFloat($(".Playerlabel").css("width"));
               $(".Playerlabel").css("left", "27%");
               $(".Playerlabel").css("margin-left", -(widthBox/2));
-              $("#legenda1").html(d.name.substring(0,9));
               $("#nameofplayer").val(d.name);
               gen_radarchartPlayers(idTournament);
             }
@@ -238,7 +262,7 @@ d3.json("data/teste4.json", function(error, data) {
         .attr("height", height+20)
         .attr("y", -10 )
         .attr("width", 0.7)
-        .attr("stroke", "orange")
+        .attr("stroke", "#71e7f4")
         .attr("fill", "transparent")
         .on("mouseover", function(d){
         div.transition()

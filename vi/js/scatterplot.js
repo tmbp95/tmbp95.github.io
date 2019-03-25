@@ -6,7 +6,7 @@ var enterOutside = false;
 
 dispatch.on("dotEnter.scatterplot", function(data){
   selectedDot = d3.select("circle[title=\'"+data.YEAR+"\'");
-  if(selectedDot.attr("title") == 2014 && begin == true){
+  if(selectedDot.attr("title") == 2015 && begin == true){
     return;
   }
   if(clickedDot == null || selectedDot.attr("title") != clickedDot){
@@ -20,7 +20,7 @@ dispatch.on("dotEnter.scatterplot", function(data){
 
 dispatch.on("dotOut.scatterplot", function(data){
   selectedDot = d3.select("circle[title=\'"+data.YEAR+"\'");
-  if(selectedDot.attr("title") == 2014 && begin == true){
+  if(selectedDot.attr("title") == 2015 && begin == true){
     return;
   }
   if(clickedDot == null || selectedDot.attr("title") != clickedDot){
@@ -33,11 +33,12 @@ dispatch.on("dotOut.scatterplot", function(data){
 })
 
 dispatch.on("dotClick.scatterplot", function(data){
-  if(selectedDot.attr("title") == 2014 && begin == true){
+  if(selectedDot.attr("title") == 2015 && begin == true){
     return;
-  }else if(selectedDot.attr("title") != 2014 && begin == true){
+  }else if(selectedDot.attr("title") != 2015 && begin == true){
     begin = false;
-    clickedDot = 2014;
+    clickedDot = 2015;
+    $(".yearlabel").html(clickedDot);
     selectedDot = d3.select("circle[title=\'"+clickedDot+"\'");
     selectedDot.transition();
     selectedDot.transition() // <------- TRANSITION STARTS HERE --------
@@ -50,6 +51,7 @@ dispatch.on("dotClick.scatterplot", function(data){
   if(clickedDot == null){
     begin = false;
     clickedDot = data.YEAR;
+    $(".yearlabel").html(clickedDot);
     selectedDot = d3.select("circle[title=\'"+data.YEAR+"\'");
     selectedDot.transition() // <------- TRANSITION STARTS HERE --------
                 .delay(0) 
@@ -65,6 +67,7 @@ dispatch.on("dotClick.scatterplot", function(data){
                .attr("fill","black")
                .attr("r", 3);
     clickedDot = data.YEAR;
+    $(".yearlabel").html(clickedDot);
     selectedDot = d3.select("circle[title=\'"+data.YEAR+"\'");
     selectedDot.transition() // <------- TRANSITION STARTS HERE --------
                .delay(0) 
@@ -77,7 +80,7 @@ dispatch.on("dotClick.scatterplot", function(data){
 function gen_scatterplot(startYear) {
   d3.select("#scatterplot").selectAll("svg").remove();
   if(startYear==null){
-    startYear=2014;
+    startYear=2015;
   }
   // Set the dimensions of the canvas / graph
   var margin = {top: 30, right: 30, bottom: 40, left: 55},
@@ -118,11 +121,11 @@ function gen_scatterplot(startYear) {
       y.domain([0, d3.max(data, function(d) { return d.NumEvents; })+100]);
 
       var yAxis = d3.axisLeft()
-                    .ticks(4)
+                    .ticks(5)
                     .scale(y);                  
 
       var xAxis = d3.axisBottom()
-                .ticks(4)
+                .ticks(3)
                 .tickFormat(d3.format("d"))
                 .scale(x);
 
@@ -151,7 +154,13 @@ function gen_scatterplot(startYear) {
           }) 
           .attr("cursor","pointer")
           .attr("cx", function(d) { return x(d.YEAR); })
-          .attr("cy", function(d) { return y(d.NumEvents); })
+          .attr("cy", function(d) { 
+            if(d.NumEvents == 7){
+              return y(d.NumEvents+15); 
+            }else{
+              return y(d.NumEvents); 
+            }
+          })
           .attr("title", function(d) {return d.YEAR;})
           .on("mouseover", function(d){
             dispatch.call("dotEnter", d, d);
@@ -171,7 +180,7 @@ function gen_scatterplot(startYear) {
           })
           .on("click", function(d){ 
             dispatch.call("dotClick", d, d);
-            if(d.YEAR == 2014 && begin == true){}else{
+            if(d.YEAR == 2015 && begin == true){}else{
               if(year != d.YEAR ){
                 year = d.YEAR; 
                 updateData(year);

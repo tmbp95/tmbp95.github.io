@@ -64,6 +64,9 @@ d3.json("data/teste3.json", function(error, data) {
         if(data[i].Map == "Tuscan" && checkbox8 === true && data[i].tournament == idTournament){
           arrayAxis.push(data[i]);
         }
+        if(data[i].Map == "Train" && checkbox9 === true && data[i].tournament == idTournament){
+          arrayAxis.push(data[i]);
+        }
       }
     data = arrayAxis;
 
@@ -109,9 +112,19 @@ d3.json("data/teste3.json", function(error, data) {
     .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
     .enter().append("rect")
       .attr("x", function(d) { return x1(d.key); })
-      .attr("y", function(d) { return y(d.value); })
+      .attr("y", function(d) { 
+        if(d.value==1){
+          return y(d.value+1);
+        }
+        return y(d.value);
+        })
       .attr("width", x1.bandwidth())
-      .attr("height", function(d) { return height - y(d.value); })
+      .attr("height", function(d) { 
+        if(d.value==1){
+            return height - y(d.value+1); 
+          }
+          return height - y(d.value); 
+       })
       .attr("class", "bar")
       .attr("fill", function(d) { return z2(d.key); })
       .on("mouseover", function(d){
@@ -162,9 +175,19 @@ d3.json("data/teste3.json", function(error, data) {
       .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
       .enter().append("rect")
         .attr("x", function(d) { return x1(d.key); })
-        .attr("y", function(d) { return y(d.value); })
-        .attr("width", x1.bandwidth()/2)
-        .attr("height", function(d) { return height - y(d.value); })
+        .attr("y", function(d) { 
+        if(d.value==1){
+          return y(d.value+1);
+        }
+        return y(d.value);
+        })
+      .attr("width", x1.bandwidth()/2)
+      .attr("height", function(d) { 
+        if(d.value==1){
+            return height - y(d.value+1); 
+          }
+          return height - y(d.value); 
+       })
         .attr("class", "bar")
         .attr("fill", function(d) { return z2(d.key); })
         .on("mouseover", function(d){
@@ -191,9 +214,19 @@ d3.json("data/teste3.json", function(error, data) {
       .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
       .enter().append("rect")
         .attr("x", function(d) { return x1(d.key) + x1.bandwidth()/2; })
-        .attr("y", function(d) { return y(d.value); })
-        .attr("width", x1.bandwidth()/2)
-        .attr("height", function(d) { return height - y(d.value); })
+        .attr("y", function(d) { 
+        if(d.value==1){
+          return y(d.value+1);
+        }
+        return y(d.value);
+        })
+      .attr("width", x1.bandwidth()/2)
+      .attr("height", function(d) { 
+        if(d.value==1){
+            return height - y(d.value+1); 
+          }
+          return height - y(d.value); 
+       })
         .attr("class", "bar")
         .attr("fill", function(d) { return z(d.key); })
         .on("mouseover", function(d){
@@ -274,9 +307,19 @@ d3.json("data/teste3.json", function(error, data) {
     .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
     .enter().append("rect")
       .attr("x", function(d) { return x1(d.key); })
-      .attr("y", function(d) { return y(d.value); })
+      .attr("y", function(d) { 
+        if(d.value==1){
+          return y(d.value+1);
+        }
+        return y(d.value);
+        })
       .attr("width", x1.bandwidth())
-      .attr("height", function(d) { return height - y(d.value); })
+      .attr("height", function(d) { 
+        if(d.value==1){
+            return height - y(d.value+1); 
+          }
+          return height - y(d.value); 
+       })
       .attr("class", "bar")
       .attr("fill", function(d) { return z(d.key); })
       .on("mouseover", function(d){
@@ -347,6 +390,7 @@ var checkbox5 = $("#checkbox5").prop('checked');
 var checkbox6 = $("#checkbox6").prop('checked');
 var checkbox7 = $("#checkbox7").prop('checked');
 var checkbox8 = $("#checkbox8").prop('checked');
+var checkbox9 = $("#checkbox8").prop('checked');
 
 gen_barchart(idTournament);
 
@@ -380,5 +424,9 @@ $("#checkbox7").on("change", function(){
 })
 $("#checkbox8").on("change", function(){
   checkbox8 = $("#checkbox8").prop('checked');
+  gen_barchart(idTournament);
+})
+$("#checkbox9").on("change", function(){
+  checkbox9 = $("#checkbox9").prop('checked');
   gen_barchart(idTournament);
 })

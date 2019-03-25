@@ -60,7 +60,7 @@ function RadarChart(id, data, options, idTournament) {
       if(value.axis == "Kills" && killsinput === true){
         vectorvalue.push(value);
       }
-       if(value.axis == "Deaths" && deathsinput === true){
+      if(value.axis == "Deaths" && deathsinput === true){
         vectorvalue.push(value);
       }
        if(value.axis == "Losses" && lossesinput === true){
@@ -113,7 +113,11 @@ function RadarChart(id, data, options, idTournament) {
     data = data.map(function(d) { return d.values })
 
     //If the supplied maxValue is smaller than the actual one, replace by the max in the data
-    var maxValue = 100;
+    var maxValue = Math.max(cfg.maxValue, d3.max(data, function(i){
+    return d3.max(i.map(
+      function(o){ return o.value; }
+    ))
+    }));
       
     var allAxis = (data[0].map(function(i, j){return i.axis})), //Names of each axis
       total = allAxis.length,         //The number of different axes

@@ -43,9 +43,8 @@ function drawCalendar(dateData,id){
     .attr("title", "tip")
     .attr("class", "tooltip2")
     .style("opacity", 0)
-
-  var minDate = d3.min(dateData, function(d) { return new Date(d.DATE) })
-  var maxDate = d3.max(dateData, function(d) { return new Date(d.DATE) })
+  var minDate = d3.min(dateData, function(d) { return new Date("01/01/"+ d.DATE.split("/")[2]) })
+  var maxDate = d3.max(dateData, function(d) { return new Date("12/31/"+ d.DATE.split("/")[2]) })
 
   var cellMargin = 2,
       cellSize = 13.5;
@@ -67,9 +66,7 @@ function drawCalendar(dateData,id){
     .data(months)
     .enter().append("svg")
     .attr("class", function(d){
-      if(d.getFullYear()==2014){
-      	return "month2";
-      }else if(d.getFullYear()==2015){
+      if(d.getFullYear()==2015){
         if(monthName(d)=="January" || monthName(d)=="February" || monthName(d)=="October"){
           return "month";
         }else{
@@ -250,6 +247,9 @@ function drawCalendar(dateData,id){
     })
     .on("click", function(d) {
       dispatch2.call("squareClick", d, d);
+      if(BallClick!=null){
+        BallClick = 0;
+      }
       var lookupEventsByIDandNameResult = lookupEventsByIDandName[d];
       var lookupEventsByIDandNameResultString = "";
       if(lookupEventsByIDandNameResult==null){
@@ -295,7 +295,7 @@ function updateData(year,id) {
   });
 }
 
-window.onload = d3.json("data/Events2014.json", function(response){
+window.onload = d3.json("data/Events2015.json", function(response){
                   drawCalendar(response,id);
                    $("#divInfoHeatmap").hide();
                 });

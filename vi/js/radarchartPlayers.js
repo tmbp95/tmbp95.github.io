@@ -73,10 +73,8 @@ function RadarChartPlayers(id, data, options, idTournament) {
     vector[i].values = vectorvalue;
     vectorvalue = [];
   }
-  
   var arrayData = [];
   for(i=0;i<vector.length;i++){
-    console.log(idTournament)
     if(vector[i].key == tempClickedBar && vector[i].tournament == idTournament){
       arrayData.push(vector[i]);
     }
@@ -86,6 +84,7 @@ function RadarChartPlayers(id, data, options, idTournament) {
       }
     }
   }
+
 
   
   setTimeout(function(){
@@ -113,8 +112,13 @@ function RadarChartPlayers(id, data, options, idTournament) {
     // into an array of values arrays
     data = data.map(function(d) { return d.values })
 
+
     //If the supplied maxValue is smaller than the actual one, replace by the max in the data
-    var maxValue = 100;
+    var maxValue = Math.max(cfg.maxValue, d3.max(data, function(i){
+    return d3.max(i.map(
+      function(o){ return o.value; }
+    ))
+    }));
       
     var allAxis = (data[0].map(function(i, j){return i.axis})), //Names of each axis
       total = allAxis.length,         //The number of different axes
